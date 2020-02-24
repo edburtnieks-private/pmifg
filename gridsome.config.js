@@ -3,20 +3,20 @@
 
 // Changes here require a server restart.
 // To restart press CTRL + C in terminal and run `gridsome develop`
-const path = require('path')
 
-function addStyleResource (rule) {
-  rule.use('style-resource')
+const path = require('path');
+
+function addStyleResource(rule) {
+  rule
+    .use('style-resource')
     .loader('style-resources-loader')
     .options({
-      patterns: [
-	      path.resolve(__dirname, './src/assets/sass/*.scss'),
-      ],
-    })
+      patterns: [path.resolve(__dirname, './src/assets/sass/*.scss')],
+    });
 }
 
 module.exports = {
-  siteName: 'Gridsome+Firestore Starter',
+  siteName: 'Project to Make an Impact on Future Generations',
   plugins: [
     {
       use: 'gridsome-source-firestore',
@@ -26,56 +26,28 @@ module.exports = {
         collections: [
           {
             ref: (db) => {
-              return db.collection('posts').where('status', '==', '1')
+              return db.collection('topics');
             },
-            slug: 'title',
-            children: [{
-              ref: (db, postDoc) => {
-                return postDoc.ref.collection('comments').limit(10)
-              }
-            }]
           },
-          {
-            ref: (db) => {
-              return db.collection('topics')
-            },
-            slug: (doc, slugify) => {
-              return `/topics/${slugify(doc.data.name)}`
-            }
-          },
-          {
-            ref: (db) => {
-              return db.collection('tags')
-            },
-            slug: (doc, slugify) => {
-              return `/tags/${slugify(doc.data.name)}`
-            }
-          },
-          {
-            ref: (db) => {
-              return db.collection('authors')
-            },
-            slug: (doc, slugify) => {
-              return `/authors/${slugify(doc.data.name)}`
-            }
-          },
-        ]
-      }
+        ],
+      },
     },
     {
       use: 'gridsome-plugin-tailwindcss',
       options: {
-      tailwindConfig: './tailwind.config.js',
-      purgeConfig: {},
-      presetEnvConfig: {},
-      shouldPurge: true,
-      shouldImport: true,
-      shouldTimeTravel: true,
-  }
-}
+        tailwindConfig: './tailwind.config.js',
+        purgeConfig: {},
+        presetEnvConfig: {},
+        shouldPurge: true,
+        shouldImport: true,
+        shouldTimeTravel: true,
+      },
+    },
   ],
-  chainWebpack: config => {
-    const types = ['vue-modules', 'vue', 'normal-modules', 'normal']
-    types.forEach(type => addStyleResource(config.module.rule('scss').oneOf(type)))
-  }
-}
+  chainWebpack: (config) => {
+    const types = ['vue-modules', 'vue', 'normal-modules', 'normal'];
+    types.forEach((type) =>
+      addStyleResource(config.module.rule('scss').oneOf(type))
+    );
+  },
+};
